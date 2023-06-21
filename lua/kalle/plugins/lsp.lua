@@ -3,11 +3,13 @@ local lsp = require("lsp-zero")
 lsp.preset("recommended")
 
 lsp.ensure_installed({
-    "gopls",
-    "tsserver",
-    "html",
-    "cssls",
-    "texlab",
+    "gopls", -- Go
+    "dockerls", -- Docker
+    "tsserver", -- TypeScript
+    "html", -- HTML 
+    "cssls", -- CSS
+    "ccls", -- C
+    "texlab", -- LaTex
 })
 
 local cmp = require("cmp")
