@@ -43,6 +43,7 @@ return packer.startup(function(use)
     -- navigation
     use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" }) -- better sorting performance
     use({ "nvim-telescope/telescope.nvim", branck = "0.1.x" }) -- telescope
+    use("theprimeagen/harpoon")
 
     -- code editing
     use("numToStr/Comment.nvim") -- comments

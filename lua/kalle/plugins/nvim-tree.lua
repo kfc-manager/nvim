@@ -4,7 +4,7 @@ if not setup then
 end
 
 -- keymap to toggle tree
-vim.keymap.set("n", "<leader>e", ":NvimTreeToggle<CR>")
+vim.keymap.set("n", "<leader>z", ":NvimTreeToggle<CR>")
 
 -- recommended settings from nvim-tree documentation
 vim.g.loaded = 1
