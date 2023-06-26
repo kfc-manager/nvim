@@ -8,7 +8,7 @@ lsp.ensure_installed({
     "tsserver", -- TypeScript
     "html", -- HTML 
     "cssls", -- CSS
-    "ccls", -- C
+    "clangd", -- C
     "texlab", -- LaTex
 })
 
