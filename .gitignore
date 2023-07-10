@@ -8,3 +8,6 @@
 **/*.njsproj
 **/*.sln
 **/*.sw?
+
+# Compiled Packer
+./plugin/packer_compiled.lua

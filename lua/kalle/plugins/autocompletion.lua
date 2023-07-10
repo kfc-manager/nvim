@@ -1,4 +1,8 @@
-local lsp = require("lsp-zero")
+local lsp_status, lsp = pcall(require, "lsp-zero")
+if not lsp_status then
+    print("couldn't load lsp-zero")
+    return
+end
 
 lsp.preset("recommended")
 
@@ -9,10 +13,14 @@ lsp.ensure_installed({
     "html", -- HTML 
     "cssls", -- CSS
     "clangd", -- C
-    "texlab", -- LaTex
 })
 
-local cmp = require("cmp")
+local cmp_status, cmp = pcall(require, "cmp")
+if not cmp_status then
+    print("couldn't load cmp")
+    return
+end
+
 local cmp_mappings = lsp.defaults.cmp_mappings({
     ["<C-k>"] = cmp.mapping.select_prev_item(), -- previous suggestion
     ["<C-j>"] = cmp.mapping.select_next_item(), -- next suggestion
