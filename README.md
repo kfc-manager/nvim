@@ -1,6 +1,6 @@
 # nvim
 
-## Prerquisites
+## Prerequisites
 
 - Latest version of [Neovim](https://neovim.io/)
 - Terminal that supports the colorscheme (Tokyo Night)
