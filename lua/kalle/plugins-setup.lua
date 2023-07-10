@@ -33,22 +33,20 @@ return packer.startup(function(use)
     -- lua functions that many plugins use
     use("nvim-lua/plenary.nvim")
 
-    -- visuals
-    use("folke/tokyonight.nvim") -- colorscheme
-    use("nvim-lualine/lualine.nvim") -- statusline
-    use("nvim-tree/nvim-tree.lua") -- file explorer
-    use("kyazdani42/nvim-web-devicons") -- file icons
-    use("nvim-treesitter/nvim-treesitter", {run = "TSUpdate"})
-
     -- navigation
     use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" }) -- better sorting performance
     use({ "nvim-telescope/telescope.nvim", branck = "0.1.x" }) -- telescope
-    use("theprimeagen/harpoon")
+    use("theprimeagen/harpoon") -- tag files on a table for quick access
 
-    -- code editing
-    use("numToStr/Comment.nvim") -- comments
+    -- visuals
+    use("folke/tokyonight.nvim") -- colorscheme
+    use("nvim-treesitter/nvim-treesitter", {run = "TSUpdate"})
+    use("nvim-lualine/lualine.nvim") -- statusline
+    use("kyazdani42/nvim-web-devicons") -- file icons
 
-    -- lsp
+    -- auto completion
+    use("windwp/nvim-autopairs") -- auto closing ({}, [], (), "", '', ``)
+    use ("windwp/nvim-ts-autotag") -- autotags for html
     use {
         "VonHeikemen/lsp-zero.nvim",
         branch = "v2.x",
@@ -76,18 +74,6 @@ return packer.startup(function(use)
             {"rafamadriz/friendly-snippets"},
         },
     }
-
-    -- auto closing brackets
-    use {
-	    "windwp/nvim-autopairs",
-        config = function() require("nvim-autopairs").setup {} end
-    }
-
-    -- latex
-    use ("lervag/vimtex")
-
-    -- autotags for html
-    use ("windwp/nvim-ts-autotag")
 
     if packer_bootstrap then
         require("packer").sync()
