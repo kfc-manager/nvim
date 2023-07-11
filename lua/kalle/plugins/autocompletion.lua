@@ -13,6 +13,8 @@ lsp.ensure_installed({
     "html", -- HTML 
     "cssls", -- CSS
     "clangd", -- C
+    "pylsp", -- Python
+    "lua_ls", -- Lua
 })
 
 local cmp_status, cmp = pcall(require, "cmp")
