@@ -4,7 +4,18 @@ if not status then
 end
 
 treesitter.setup {
-    ensure_installed = { "go", "typescript", "html", "css", "c", "dockerfile", "make", "bash"},
+    ensure_installed = {
+        "go",
+        "typescript",
+        "html",
+        "css",
+        "c",
+        "python",
+        "lua",
+        "dockerfile",
+        "make",
+        "bash",
+    },
 
     -- Install parsers synchronously (only applied to `ensure_installed`)
     sync_install = false,
