@@ -46,8 +46,8 @@ return packer.startup(function(use)
 
     -- auto completion
     use("windwp/nvim-autopairs") -- auto closing ({}, [], (), "", '', ``)
-    use ("windwp/nvim-ts-autotag") -- autotags for html
-    use {
+    use("windwp/nvim-ts-autotag") -- autotags for html
+    use{
         "VonHeikemen/lsp-zero.nvim",
         branch = "v2.x",
         requires = {
@@ -74,6 +74,9 @@ return packer.startup(function(use)
             {"rafamadriz/friendly-snippets"},
         },
     }
+
+    -- latex
+    use("lervag/vimtex")
 
     if packer_bootstrap then
         require("packer").sync()
