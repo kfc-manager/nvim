@@ -33,23 +33,25 @@ return packer.startup(function(use)
     -- lua functions that many plugins use
     use("nvim-lua/plenary.nvim")
 
-    -- navigation
-    use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" }) -- better sorting performance
-    use({ "nvim-telescope/telescope.nvim", branck = "0.1.x" }) -- telescope
-    use("theprimeagen/harpoon") -- tag files on a table for quick access
+    -- file navigation
+    use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
+    use({ "nvim-telescope/telescope.nvim", branck = "0.1.x" })
+    use("theprimeagen/harpoon")
 
     -- visuals
-    use("folke/tokyonight.nvim") -- colorscheme
+    use("folke/tokyonight.nvim")
     use("nvim-treesitter/nvim-treesitter", {run = "TSUpdate"})
-    use("nvim-lualine/lualine.nvim") -- statusline
-    use("kyazdani42/nvim-web-devicons") -- file icons
+    use("nvim-lualine/lualine.nvim")
+    use("kyazdani42/nvim-web-devicons")
 
-    -- auto completion
-    use("windwp/nvim-autopairs") -- auto closing ({}, [], (), "", '', ``)
-    use("windwp/nvim-ts-autotag") -- autotags for html
+    -- others
+    use("lewis6991/gitsigns.nvim")
+    use("windwp/nvim-autopairs")
+    use("windwp/nvim-ts-autotag")
+    use("lervag/vimtex")
+
     use{
         "VonHeikemen/lsp-zero.nvim",
-        branch = "v2.x",
         requires = {
             -- LSP Support
             {"neovim/nvim-lspconfig"},
@@ -74,11 +76,11 @@ return packer.startup(function(use)
             {"rafamadriz/friendly-snippets"},
         },
     }
-
-    -- latex
-    use("lervag/vimtex")
+    use("jose-elias-alvarez/null-ls.nvim")
+    use("MunifTanjim/prettier.nvim")
 
     if packer_bootstrap then
         require("packer").sync()
     end
+
 end)

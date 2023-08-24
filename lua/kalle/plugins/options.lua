@@ -1,7 +1,5 @@
 local opt = vim.opt
 
-vim.g.mapleader = " " -- global leader for keymaps
-
 -- line numbers
 
 opt.relativenumber = true
@@ -27,7 +25,7 @@ opt.smartcase = true
 
 opt.cursorline = true
 
--- appearance 
+-- appearance
 
 opt.termguicolors = true
 opt.background = "dark"
@@ -41,7 +39,7 @@ opt.backspace = "indent,eol,start"
 
 opt.clipboard:append("unnamedplus")
 
---split windows
+-- split windows
 
 opt.splitright = true
 opt.splitbelow = true
