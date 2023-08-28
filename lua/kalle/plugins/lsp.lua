@@ -37,6 +37,34 @@ lsp.setup_nvim_cmp({
     mapping = cmp_mappings,
 })
 
+local go_status, go = pcall(require, "go")
+if not go_status then
+    print("couldn't load go.nvim")
+end
+
+go.setup({
+    gofmt = "golines",
+})
+
+lsp.on_attach(
+    function(client, bufnr)
+        if client.name == "gopls" then
+            vim.opt.tabstop = 2
+            vim.opt.shiftwidth = 2
+            local format_sync_grp = vim.api.nvim_create_augroup("GoImport", {})
+            vim.api.nvim_create_autocmd("BufWritePre", {
+                --pattern = "*.go",
+                --callback = function()
+                --    require("go.format").goimport()
+                --end,
+                command = "GoFmt",
+                group = format_sync_grp,
+            })
+        end
+        lsp.default_keymaps({buffer = bufnr})
+    end
+)
+
 lsp.setup()
 
 local null_status, null_ls = pcall(require, "null-ls")
@@ -53,11 +81,11 @@ null_ls.setup({
     on_attach = function (client, bufnr)
         if client.supports_method("textDocument/formatting") then
             -- format on save
+            vim.opt.tabstop = 2
+            vim.opt.shiftwidth = 2
             local group = vim.api.nvim_create_augroup("lsp_format_on_save", { clear = false })
             local event = "BufWritePre" -- or "BufWritePost"
             local async = event == "BufWritePost"
-            vim.opt.tabstop = 2
-            vim.opt.shiftwidth = 2
             vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
             vim.api.nvim_create_autocmd(event, {
                 buffer = bufnr,

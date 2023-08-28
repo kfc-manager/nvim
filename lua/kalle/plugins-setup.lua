@@ -76,6 +76,7 @@ return packer.startup(function(use)
             {"rafamadriz/friendly-snippets"},
         },
     }
+    use("ray-x/go.nvim")
     use("jose-elias-alvarez/null-ls.nvim")
     use("MunifTanjim/prettier.nvim")
 

@@ -114,6 +114,11 @@ _G.packer_plugins = {
     path = "/home/kilian/.local/share/nvim/site/pack/packer/start/gitsigns.nvim",
     url = "https://github.com/lewis6991/gitsigns.nvim"
   },
+  ["go.nvim"] = {
+    loaded = true,
+    path = "/home/kilian/.local/share/nvim/site/pack/packer/start/go.nvim",
+    url = "https://github.com/ray-x/go.nvim"
+  },
   harpoon = {
     loaded = true,
     path = "/home/kilian/.local/share/nvim/site/pack/packer/start/harpoon",
