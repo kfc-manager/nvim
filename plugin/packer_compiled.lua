@@ -116,7 +116,7 @@ _G.packer_plugins = {
   },
   ["go.nvim"] = {
     loaded = true,
-    path = "/home/kilian/.local/share/nvim/site/pack/packer/start/go.nvim",
+    path = "/home/calefice/.local/share/nvim/site/pack/packer/start/go.nvim",
     url = "https://github.com/ray-x/go.nvim"
   },
   harpoon = {
