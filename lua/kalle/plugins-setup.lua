@@ -43,6 +43,7 @@ return packer.startup(function(use)
     use("nvim-treesitter/nvim-treesitter", {run = "TSUpdate"})
     use("nvim-lualine/lualine.nvim")
     use("kyazdani42/nvim-web-devicons")
+    use("xiyaowong/transparent.nvim")
 
     -- others
     use("lewis6991/gitsigns.nvim")
