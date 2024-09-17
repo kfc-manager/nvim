@@ -43,7 +43,7 @@ if not go_status then
 end
 
 go.setup({
-    gofmt = "golines",
+    gofmt = "gopls", --golines (currently not working)
 })
 
 lsp.on_attach(
@@ -51,13 +51,12 @@ lsp.on_attach(
         if client.name == "gopls" then
             vim.opt.tabstop = 2
             vim.opt.shiftwidth = 2
-            local format_sync_grp = vim.api.nvim_create_augroup("GoImport", {})
+            local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
             vim.api.nvim_create_autocmd("BufWritePre", {
-                --pattern = "*.go",
-                --callback = function()
-                    --require("go.format").goimport()
-                --end,
-                command = "GoFmt",
+                pattern = "*.go",
+                callback = function()
+                    require('go.format').goimports()
+                end,
                 group = format_sync_grp,
             })
         end
