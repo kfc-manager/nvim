@@ -42,8 +42,14 @@ if not go_status then
     print("couldn't load go.nvim")
 end
 
-go.setup({
-    gofmt = "gopls", --golines (currently not working)
+go.setup({})
+
+lsp.configure('gopls', {
+  settings = {
+    gopls = {
+      buildFlags = {"-tags=test"}
+    }
+  }
 })
 
 lsp.on_attach(
@@ -76,6 +82,7 @@ null_ls.setup({
     debug = false,
     sources = {
         null_ls.builtins.formatting.prettier,
+        -- null_ls.builtins.diagnostics.revive,
     },
     on_attach = function (client, bufnr)
         if client.supports_method("textDocument/formatting") then
