@@ -1,76 +1,79 @@
-local lsp_status, lsp = pcall(require, "lsp-zero")
-if not lsp_status then
-    print("couldn't load lsp-zero")
-    return
-end
+-- NOTE: to make any of this work you need a language server.
+-- If you don't know what that is, watch this 5 min video:
+-- https://www.youtube.com/watch?v=LaS32vctfOY
 
-lsp.preset("recommended")
+-- Reserve a space in the gutter
+vim.opt.signcolumn = 'yes'
 
-lsp.ensure_installed({
-    "gopls", -- Go
-    "tsserver", -- TypeScript
-    "html", -- HTML 
-    "cssls", -- CSS
-    "dockerls", -- Docker
-    "clangd", -- C
-    "pylsp", -- Python
-    "lua_ls", -- Lua
+-- Add cmp_nvim_lsp capabilities settings to lspconfig
+-- This should be executed before you configure any language server
+local lspconfig_defaults = require('lspconfig').util.default_config
+lspconfig_defaults.capabilities = vim.tbl_deep_extend(
+  'force',
+  lspconfig_defaults.capabilities,
+  require('cmp_nvim_lsp').default_capabilities()
+)
+
+-- This is where you enable features that only work
+-- if there is a language server active in the file
+vim.api.nvim_create_autocmd('LspAttach', {
+  desc = 'LSP actions',
+  callback = function(event)
+    local opts = {buffer = event.buf}
+
+    vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
+    vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
+    vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
+    vim.keymap.set('n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<cr>', opts)
+    vim.keymap.set('n', 'go', '<cmd>lua vim.lsp.buf.type_definition()<cr>', opts)
+    vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
+    vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
+    vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+    vim.keymap.set({'n', 'x'}, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
+    vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
+  end,
 })
 
-local cmp_status, cmp = pcall(require, "cmp")
-if not cmp_status then
-    print("couldn't load cmp")
-    return
-end
+-- You'll find a list of language servers here:
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
+-- These are example language servers. 
+require('lspconfig').gopls.setup({settings = {
+  gopls = {
+    buildFlags = {"-tags=test"}
+  }
+}})
+require('lspconfig').rust_analyzer.setup({})
+require('lspconfig').ts_ls.setup({})
+require('lspconfig').html.setup({})
+require('lspconfig').cssls.setup({})
+require('lspconfig').dockerls.setup({})
+require('lspconfig').terraformls.setup({})
+require('lspconfig').clangd.setup({})
+require('lspconfig').pylsp.setup({})
+require('lspconfig').lua_ls.setup({})
 
-local cmp_mappings = lsp.defaults.cmp_mappings({
+local cmp = require('cmp')
+
+cmp.setup({
+  sources = {
+    {name = 'nvim_lsp'},
+  },
+  snippet = {
+    expand = function(args)
+      -- You need Neovim v0.10 to use vim.snippet
+      vim.snippet.expand(args.body)
+    end,
+  },
+  mapping = cmp.mapping.preset.insert({
     ["<C-k>"] = cmp.mapping.select_prev_item(), -- previous suggestion
     ["<C-j>"] = cmp.mapping.select_next_item(), -- next suggestion
     ["<C-b>"] = cmp.mapping.scroll_docs(-4),
     ["<C-f>"] = cmp.mapping.scroll_docs(4),
     ["<C-Space>"] = cmp.mapping.complete(), --show completion suggestions
     ["<C-e>"] = cmp.mapping.abort(), -- close completion window
-    ["<Tab>"] = cmp.mapping.confirm({ select = true }),
+    ['<Tab>'] = cmp.mapping.confirm({ select = true }),
+  }),
 })
-
-lsp.setup_nvim_cmp({
-    mapping = cmp_mappings,
-})
-
-local go_status, go = pcall(require, "go")
-if not go_status then
-    print("couldn't load go.nvim")
-end
-
-go.setup({})
-
-lsp.configure('gopls', {
-  settings = {
-    gopls = {
-      buildFlags = {"-tags=test"}
-    }
-  }
-})
-
-lsp.on_attach(
-    function(client, bufnr)
-        if client.name == "gopls" then
-            vim.opt.tabstop = 2
-            vim.opt.shiftwidth = 2
-            local format_sync_grp = vim.api.nvim_create_augroup("GoFormat", {})
-            vim.api.nvim_create_autocmd("BufWritePre", {
-                pattern = "*.go",
-                callback = function()
-                    require('go.format').goimports()
-                end,
-                group = format_sync_grp,
-            })
-        end
-        lsp.default_keymaps({buffer = bufnr})
-    end
-)
-
-lsp.setup()
 
 local null_status, null_ls = pcall(require, "null-ls")
 if not null_status then
@@ -81,7 +84,26 @@ end
 null_ls.setup({
     debug = false,
     sources = {
-        null_ls.builtins.formatting.prettier,
+        null_ls.builtins.formatting.prettier.with({
+            bin = "prettierd",
+		        filetypes = {
+			          "javascript",
+                "typescript",
+                "javascriptreact",
+                "typescriptreact",
+                "css",
+                "scss",
+                "html",
+                "json",
+                "yaml",
+                "markdown",
+                "graphql",
+                "md",
+                "txt",
+		        },
+	      }),
+        null_ls.builtins.formatting.goimports,
+        null_ls.builtins.formatting.black.with({ extra_args = { "--fast" } }),
         -- null_ls.builtins.diagnostics.revive,
     },
     on_attach = function (client, bufnr)
@@ -103,23 +125,4 @@ null_ls.setup({
             })
         end
     end,
-})
-
-local prettier_status, prettier = pcall(require, "prettier")
-if not prettier_status then
-    print("couldn't load prettier")
-    return
-end
-
-prettier.setup({
-    bin = "prettier",
-    filetypes = {
-        "css",
-        "html",
-        "javascript",
-        "javascriptreact",
-        "json",
-        "typescript",
-        "typescriptreact",
-  },
 })
