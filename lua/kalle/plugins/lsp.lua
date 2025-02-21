@@ -21,6 +21,14 @@ vim.api.nvim_create_autocmd('LspAttach', {
   callback = function(event)
     local opts = {buffer = event.buf}
 
+    if #event.file >= 3 and string.sub(event.file, -2) == "py" then
+        vim.opt.tabstop = 4
+        vim.opt.shiftwidth = 4
+    else
+        vim.opt.tabstop = 2
+        vim.opt.shiftwidth = 2
+    end
+
     vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>', opts)
     vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>', opts)
     vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<cr>', opts)
@@ -108,9 +116,7 @@ null_ls.setup({
     },
     on_attach = function (client, bufnr)
         if client.supports_method("textDocument/formatting") then
-            -- format on save
-            vim.opt.tabstop = 2
-            vim.opt.shiftwidth = 2
+            -- format on save 
             local group = vim.api.nvim_create_augroup("lsp_format_on_save", { clear = false })
             local event = "BufWritePre" -- or "BufWritePost"
             local async = event == "BufWritePost"
