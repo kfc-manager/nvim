@@ -73,27 +73,25 @@ cmp.setup({
   }),
 })
 
-vim.api.nvim_create_autocmd("BufWritePre", {
+vim.api.nvim_create_autocmd("BufWritePost", {
   pattern = "*.go",
   callback = function()
     local file = vim.fn.expand("%")
     vim.fn.system({"go", "fmt", file})
-    local lines = vim.fn.readfile(file)
-    vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+    vim.cmd("silent! checktime")
   end,
 })
 
-vim.api.nvim_create_autocmd("BufWritePre", {
+vim.api.nvim_create_autocmd("BufWritePost", {
   pattern = "*.py",
   callback = function()
     local file = vim.fn.expand("%")
     vim.fn.system({"black", "--fast", file})
-    local lines = vim.fn.readfile(file)
-    vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+    vim.cmd("silent! checktime")
   end,
 })
 
-vim.api.nvim_create_autocmd("BufWritePre", {
+vim.api.nvim_create_autocmd("BufWritePost", {
   pattern = {
     "*.js", 
     "*.ts", 
@@ -109,21 +107,16 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   },
   callback = function()
     local file = vim.fn.expand("%")
-    local result = vim.fn.system({"prettier", file})
-    if vim.v.shell_error == 0 then
-      vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(result, "\n"))
-    else
-      vim.notify("prettier formatting failed", vim.log.levels.ERROR)
-    end
+    vim.fn.system({"prettier", "--write", file})
+    vim.cmd("silent! checktime")
   end,
 })
 
-vim.api.nvim_create_autocmd("BufWritePre", {
+vim.api.nvim_create_autocmd("BufWritePost", {
   pattern = {"*.tf", "*.tfvars", "*.hcl"},
   callback = function()
     local file = vim.fn.expand("%")
     vim.fn.system({"terraform", "fmt", file})
-    local lines = vim.fn.readfile(file)
-    vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+    vim.cmd("silent! checktime")
   end,
 })
