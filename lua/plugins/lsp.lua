@@ -117,3 +117,13 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = {"*.tf", "*.tfvars", "*.hcl"},
+  callback = function()
+    local file = vim.fn.expand("%")
+    vim.fn.system({"terraform", "fmt", file})
+    local lines = vim.fn.readfile(file)
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+  end,
+})
