@@ -1,12 +1,6 @@
--- NOTE: to make any of this work you need a language server.
--- If you don't know what that is, watch this 5 min video:
--- https://www.youtube.com/watch?v=LaS32vctfOY
-
 -- Reserve a space in the gutter
 vim.opt.signcolumn = 'yes'
 
--- Add cmp_nvim_lsp capabilities settings to lspconfig
--- This should be executed before you configure any language server
 local lspconfig_defaults = require('lspconfig').util.default_config
 lspconfig_defaults.capabilities = vim.tbl_deep_extend(
   'force',
@@ -14,8 +8,6 @@ lspconfig_defaults.capabilities = vim.tbl_deep_extend(
   require('cmp_nvim_lsp').default_capabilities()
 )
 
--- This is where you enable features that only work
--- if there is a language server active in the file
 vim.api.nvim_create_autocmd('LspAttach', {
   desc = 'LSP actions',
   callback = function(event)
@@ -42,9 +34,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
   end,
 })
 
--- You'll find a list of language servers here:
--- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
--- These are example language servers. 
+-- list of language servers: https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
 require('lspconfig').gopls.setup({settings = {
   gopls = {
     buildFlags = {"-tags=test integration"}
@@ -58,7 +48,7 @@ require('lspconfig').dockerls.setup({})
 require('lspconfig').terraformls.setup({})
 require('lspconfig').clangd.setup({})
 require('lspconfig').pylsp.setup({})
-require('lspconfig').lua_ls.setup({})
+-- require('lspconfig').lua_ls.setup({})
 
 local cmp = require('cmp')
 
@@ -68,7 +58,7 @@ cmp.setup({
   },
   snippet = {
     expand = function(args)
-      -- You need Neovim v0.10 to use vim.snippet
+      -- need Neovim v0.10 to use vim.snippet
       vim.snippet.expand(args.body)
     end,
   },
@@ -83,51 +73,47 @@ cmp.setup({
   }),
 })
 
-local null_status, null_ls = pcall(require, "null-ls")
-if not null_status then
-    print("couldn't load null-ls")
-    return
-end
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.go",
+  callback = function()
+    local file = vim.fn.expand("%")
+    vim.fn.system({"go", "fmt", file})
+    local lines = vim.fn.readfile(file)
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+  end,
+})
 
-null_ls.setup({
-  debug = false,
-  sources = {  
-    null_ls.builtins.formatting.prettier.with({
-      filetypes = {
-        "javascript",
-        "typescript",
-        "javascriptreact",
-        "typescriptreact",
-        "css",
-        "scss",
-        "html",
-        "json",
-        "yaml",
-        "markdown",
-        "graphql",
-        "md",
-        "txt",
-      },
-    }),
-    null_ls.builtins.formatting.goimports,
-    null_ls.builtins.formatting.black.with({ extra_args = { "--fast" } }),
-    -- null_ls.builtins.diagnostics.revive,
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*.py",
+  callback = function()
+    local file = vim.fn.expand("%")
+    vim.fn.system({"black", "--fast", file})
+    local lines = vim.fn.readfile(file)
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = {
+    "*.js", 
+    "*.ts", 
+    "*.jsx", 
+    "*.tsx", 
+    "*.md", 
+    "*.yml", 
+    "*.yaml", 
+    "*.json", 
+    "*.css", 
+    "*.htm", 
+    "*.html",
   },
-  on_attach = function (client, bufnr)
-    if client.supports_method("textDocument/formatting") then
-      -- format on save 
-      local group = vim.api.nvim_create_augroup("lsp_format_on_save", { clear = false })
-      local event = "BufWritePre" -- or "BufWritePost"
-      local async = event == "BufWritePost"
-      vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })
-      vim.api.nvim_create_autocmd(event, {
-        buffer = bufnr,
-        group = group,
-        callback = function()
-          vim.lsp.buf.format({ bufnr = bufnr, async = async })
-        end,
-        desc = "[lsp] format on save",
-      })
-      end
+  callback = function()
+    local file = vim.fn.expand("%")
+    local result = vim.fn.system({"prettier", file})
+    if vim.v.shell_error == 0 then
+      vim.api.nvim_buf_set_lines(0, 0, -1, false, vim.split(result, "\n"))
+    else
+      vim.notify("prettier formatting failed", vim.log.levels.ERROR)
+    end
   end,
 })
